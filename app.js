@@ -23,6 +23,7 @@ async function downFile () {
 
 // 修改文件
 async function changeFile () {
+    console.log(KEY);
    let content = await fs.readFileSync('./JD_DailyBonus.js', 'utf8')
    content = content.replace(/var Key = ''/, `var Key = '${KEY}'`);
    if (DualKey) {
