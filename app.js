@@ -30,9 +30,9 @@ async function changeFile () {
     content = content.replace(/var DualKey = ''/, `var DualKey = '${DualKey}'`);
    }
     content = content.replace(/var OtherKey =  ''/,`var OtherKey = [{
-    "cookie": ${KEY}
+    "cookie": "${KEY}"
   }, {
-    "cookie": ${DualKey}
+    "cookie": "${DualKey}"
   }]`)
    await fs.writeFileSync( './JD_DailyBonus.js', content, 'utf8')
 }
