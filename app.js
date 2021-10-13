@@ -37,51 +37,49 @@ async function changeFile () {
    await fs.writeFileSync( './JD_DailyBonus.js', content, 'utf8')
 }
 
-async function sendNotify () {
-  const path = "./result.txt";
-  let content = "";
-  if (fs.existsSync(path)) {
-    content = await fs.readFileSync(path, "utf8");
+async function sendNotify (text,desp) {
+  const options ={
+    uri:  `https://sc.ftqq.com/${serverJ}.send`,
+    form: { text, desp },
+    json: true,
+    method: 'POST'
   }
-  let t = content.match(/【签到概览】:((.|\n)*)【签到总计】/);
-
-  let res = t ? t[1].replace(/\n/,'') : '失败'
-  let t2 = content.match(/【签到总计】:((.|\n)*)【账号总计】/)
-  let res2 = t2 ? t2[1].replace(/\n/,'') : '总计0'
-
-  const title = `${res2}-${res}-${new Date().toLocaleDateString()}`;
-  await send({
-    title,
-    text: content,
-    method: PUSH_METHOD,
-    key: PUSH_KEY || serverJ,
-    secret: PUSH_SECRET,
-    address: PUSH_ADDRESS
-  });
-  await sendNotify("" + ` ${res2} ` + ` ${res} ` + new Date().toLocaleDateString(), content);
+  await rp.post(options).then(res=>{
+    console.log(res)
+  }).catch((err)=>{
+    console.log(err)
+  })
 }
 
-// 主程序
-async function main() {
+async function start() {
   if (!KEY) {
     console.log('请填写 key 后在继续')
     return
   }
   // 下载最新代码
   await downFile();
-  console.log('下载代码完毕');
-  
+  console.log('下载代码完毕')
   // 替换变量
   await changeFile();
-  console.log('替换变量完毕');
-  
+  console.log('替换变量完毕')
   // 执行
   await exec("node JD_DailyBonus.js >> result.txt");
-  console.log('执行完毕');
+  console.log('执行完毕')
 
-  // 发送结果
-  await sendNotify();
-  console.log('发送完毕');
+  if (serverJ) {
+    const path = "./result.txt";
+    let content = "";
+    if (fs.existsSync(path)) {
+      content = fs.readFileSync(path, "utf8");
+    }
+    let t = content.match(/【签到概览】:((.|\n)*)【签到奖励】/)
+    let res = t ? t[1].replace(/\n/,'') : '失败'
+    let t2 = content.match(/【签到奖励】:((.|\n)*)【其他奖励】/)
+    let res2 = t2 ? t2[1].replace(/\n/,'') : '总计0'
+
+    
+    await sendNotify("" + ` ${res2} ` + ` ${res} ` + new Date().toLocaleDateString(), content);
+  }
 }
 
-main();
+start()
