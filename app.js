@@ -2,10 +2,10 @@
 // create by ruicky
 // detail url: https://github.com/ruicky/jd_sign_bot
 
-import { execSync as exec } from 'child_process';
-import fs from 'fs';
-import download from 'download';
-import send from './utils/sendNotify.js';
+const exec = require('child_process').execSync;
+const fs = require('fs');
+const rp = require('request-promise');
+const download = require('download');
 
 // 公共变量
 //const { KEY, serverJ, DualKey, PUSH_METHOD, PUSH_KEY, PUSH_SECRET, PUSH_ADDRESS } = process.env;
